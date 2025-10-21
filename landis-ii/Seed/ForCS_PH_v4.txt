@@ -1,0 +1,236 @@
+LandisData  "ForC Succession"
+
+Timestep  1
+
+>> SeedingAlgorithm  NoDispersal
+SeedingAlgorithm  WardSeedDispersal 
+
+ForCSClimateFile	"climate.txt"
+
+>>InitialCommunities      "./initcomm_HwCw300_v1.txt" << select as needed
+InitialCommunities      "./initcomm_HwCw150_v1.txt"
+InitialCommunitiesMap   "./init.img" <<
+
+DisturbanceMatrixFile "ForCS_DM_North150NoBurn.txt"
+
+>>SnagFile  << not using for calibration but putting this in as a place holder
+
+ForCSOutput
+>> Output interval
+>>  Biomass     DOM Pools   Flux	Summary
+>>  -------     ---------   ----	-------
+    1           1           1		1
+
+SoilSpinUp
+>>On/Off     Tolerance   Max
+>>Flag         %         Iterations
+>>-------    ---------   -------
+   1          1.0          20				<< spinup should be off for calibration, we are just tracking live pools
+
+
+AvailableLightBiomass					<< Updated with newer values from Caren "FORC_baseline_moreNR_lowMB.txt"
+>> Shade									
+>> Class	Ecoregions							
+>> no shade	0	0	0	0	0	0	0
+>> ----------------------------------------------------------------------									
+		ICHmc	
+	1	15%	
+	2	35%	
+	3	55%	
+	4	80%	
+	5	100%	
+
+		
+
+
+LightEstablishmentTable					<< Updated with newer values from Caren "FORC_baseline_moreNR_lowMB.txt"
+>> Spp Shade	Probability
+>> Class	by Actual Shade
+>> ----------	--------------------	
+>>	0	1	2	3	4	5
+1	1	0.5	0.2	0.0	0.0	0.0
+2	0.5	1	1	1	0.5	0.0
+3	0.2	0.2	1	1	1	0.5
+4	0	0	0.2	1	1	0.5
+5	0	0.1	0.2	0.2	0.5	0.5
+
+
+
+
+SpeciesParameters
+
+>> Species  Leaf   Mortal   Merchantable    Merch.      Merch.      Prop.		Growth
+>>          Long   Shape                  Curve Shape Curve Shape Non-merch.	Shape
+>>                  Param   Min Age         Param a     Param b     to FastAG	Param
+>> ---------------------------------------------------------------------------
+
+	Hw 		3		16		45				0.8594		0.0287		0.25    	0.38   << EDITED MORTALITY SHAPE PARAMETER FOR Hw BASED ON FKT parameterization
+	Cw		3		16		45				0.8594		0.0287		0.25		0.35
+	HwS     3       16      45              0.8594      0.0287      0.25        0.58
+	CwS     3       16      45              0.8594      0.0287      0.25        0.66
+
+DOMPools
+>>  ID      Name                        Prop to
+>>                                      Atm
+>>  ----    -------------------------   ---------
+    1       "Very Fast Aboveground"     0.815
+    2       "Very Fast Belowground"     0.83
+    3       "Fast Aboveground"          0.83
+    4       "Fast Belowground"          0.83
+    5       "Medium"                    0.83
+    6       "Slow Aboveground"          0.83		<<check
+    7       "Slow Belowground"          0.83		<< check
+    8       "Stem Snag"                 0.83
+    9       "Other Snag"                0.83
+    10      "Extra pool"                0.83
+
+EcoSppDOMParameters
+
+>> March 25 2014, New T=0 values
+>> Max applied decay rate = 1    Min applied decay rate = 0
+>> Warning if calculated applied decay rate is neg and set to 0 or >1 and set to 1.
+>>
+>>  Eco Spp     DOM/Soil Decay   Amount	Q10 RefTemp 10C
+>>               Pool     Rate   at T0	
+>>  -------------------------------------------------------------
+
+ICHmc		Hw	1	0.355	0.286	2.65			<< Get/modify values for other species from CD Pine Creek files
+ICHmc		Hw	2	0.5	0.001	2
+ICHmc		Hw	3	0.1435	0.084	2
+ICHmc		Hw	4	0.1435	0.032	2
+ICHmc		Hw	5	0.0374	455.25	2
+ICHmc		Hw	6	0.015	926.118	2
+ICHmc		Hw	7	0.0033	1367.872	2.65
+ICHmc		Hw	8	0.0187	12.339	1
+ICHmc		Hw	9	0.07175	0.016	2
+ICHmc		Hw	10	0	0	2
+
+ICHmc		Cw	1	0.355	0.286	2.65			
+ICHmc		Cw	2	0.5	0.001	2
+ICHmc		Cw	3	0.1435	0.084	2
+ICHmc		Cw	4	0.1435	0.032	2
+ICHmc		Cw	5	0.0374	455.25	2
+ICHmc		Cw	6	0.015	926.118	2
+ICHmc		Cw	7	0.0033	1367.872	2.65
+ICHmc		Cw	8	0.0187	12.339	1
+ICHmc		Cw	9	0.07175	0.016	2
+ICHmc		Cw	10	0	0	2
+
+ICHmc		HwS	1	0.355	0.286	2.65			<< Get/modify values for other species from CD Pine Creek files
+ICHmc		HwS	2	0.5	0.001	2
+ICHmc		HwS	3	0.1435	0.084	2
+ICHmc		HwS	4	0.1435	0.032	2
+ICHmc		HwS	5	0.0374	455.25	2
+ICHmc		HwS	6	0.015	926.118	2
+ICHmc		HwS	7	0.0033	1367.872	2.65
+ICHmc		HwS	8	0.0187	12.339	1
+ICHmc		HwS	9	0.07175	0.016	2
+ICHmc		HwS	10	0	0	2
+
+ICHmc		CwS	1	0.355	0.286	2.65			
+ICHmc		CwS	2	0.5	0.001	2
+ICHmc		CwS	3	0.1435	0.084	2
+ICHmc		CwS	4	0.1435	0.032	2
+ICHmc		CwS	5	0.0374	455.25	2
+ICHmc		CwS	6	0.015	926.118	2
+ICHmc		CwS	7	0.0033	1367.872	2.65
+ICHmc		CwS	8	0.0187	12.339	1
+ICHmc		CwS	9	0.07175	0.016	2
+ICHmc		CwS	10	0	0	2
+
+
+
+ForCSProportions    
+>> Proportion of physical turnover transferred from a biomass pool to a specific DOM or soil pool.
+>> Proportions are to be specified as a value between [0, 1].
+>>
+>> Biomass Fine Roots: When roots die, the proportion of the killed fine root carbon pool going to the above ground very fast pool (i.e. DOMPoolID = 1, "Very Fast Aboveground")
+>> where the remainder going to the below ground very fast pool (i.e. DOMPoolID = 2, "Very Fast Belowground").
+>>
+>> Biomass Coarse Roots: When roots die, the proportion of the killed coarse roots going to the above ground fast pool (i.e. DOMPoolID = 3, "Fast Aboveground")
+>> where the remainder going to the below ground fast pool (i.e. DOMPoolID = 4, "Fast Belowground").
+>>
+>> DOM SlowAG (6) to SlowBG (7): Proportion of C transferred between these two pools annually.
+>>
+>> DOM StemSnag (8) to Medium (5): Proportion of C transferred between these two pools annually.
+>>
+>> DOM BranchSnag (9) to FastAG (3): Proportion of C transferred between these two pools annually.
+>>
+>> 
+>>  Biomass Biomass     DOM         DOM             DOM
+>>  Fine    Coarse      SlowAG to   StemSnag to     BranchSnag
+>>                      SlowBG      Medium          to FastAG
+>>  ------- -------     ---------   -----------     ----------
+    0.5     0.5         0.0006 		0.032           0.1
+
+ANPPTimeSeries
+
+>> ANPP 
+>>  Yr     Eco   Spp  ANPP(g/m2/yr) ANPP-Std
+>> -------------------------------------------------------------------------------      
+
+>>0	ICHmc1	Ac	1374	0
+>>0	ICHmc1	At	2663	0
+>>0	ICHmc1	Ba	718	0
+>>0	ICHmc1	Bl	1514	0
+>>0	ICHmc1	Ep	2812	0
+0	ICHmc	Hw 	1000   0.1					<< Based on SORTIE runs for Date Creek and site tool parameterization; see Run27 Output
+0	ICHmc	Cw 	600	   0.1		
+0	ICHmc	HwS 1000   0.1
+0   ICHmc   CwS 600    0.1
+>>0	ICHmc1	Pa	2308	0
+>>0	ICHmc1	Pl	3039	0
+>>0	ICHmc1	Sb	359	0
+>>0	ICHmc1	Sx	1986	0
+
+
+MaxBiomassTimeSeries
+>>  Yr      Ecoregion   Spp       MaxBiomass(g/m2)  
+>> ------------------------- --------------- 
+
+>>0	ICHmc1	Ac	22947
+>>0	ICHmc1	At	44617
+>>0	ICHmc1	Ba	22175
+>>0	ICHmc1	Bl	43784
+>>0	ICHmc1	Ep	42048
+0	ICHmc	Hw 	45022					<< Based on SORTIE runs for Date Creek; see Run27 Output
+0	ICHmc	Cw 	26145
+0	ICHmc	HwS 45022					
+0	ICHmc	CwS 26145
+>>0	ICHmc1	Pa	50525
+>>0	ICHmc1	Pl	49143
+>>0	ICHmc1	Sb	14916
+>>0	ICHmc1	Sx	48866
+>>0	SBSmc2	Sx	35199
+
+ 
+
+EstablishProbabilities
+>>  Yr   Ecoregion   Spp         Prob
+>> ------------------------- ---------------
+	
+	>>0	ICHmc1	Ac	0.119237394
+	>>0	ICHmc1	At	0.206827983
+	>>0	ICHmc1	Ba	0.173050281
+	>>0	ICHmc1	Bl	0.197153232
+	>>0	ICHmc1	Ep	0.207554003
+	0	ICHmc	Hw 	0.05				<< Based on SORTIE runs for Date Creek, see Run27 Output. Needed to add recruitment to get good model fit.
+	0	ICHmc	Cw 	0.15
+	0	ICHmc	HwS 0.05				
+	0	ICHmc	CwS 0.15
+	>>0	ICHmc1	Pa	0.266500254
+	>>0	ICHmc1	Pl	0.271717056
+	>>0	ICHmc1	Sb	0.282486453
+	>>0	ICHmc1	Sx	0.273993582
+
+
+RootDynamics
+>>	Eco	Sp   MinB(g/m2)	Root: PropFRt  FRt	CRt
+>>				Shoot		turnover turnover
+>> ------------------------- -------------------------------------------
+	
+	ICHmc		Hw 	0	0.292	0.07	0.29	0.012							<< Again, just changed this one ecoregion name to match this run
+	ICHmc		Cw 	0	0.292	0.07	0.29	0.012
+	ICHmc		HwS 0	0.292	0.07	0.29	0.012							
+	ICHmc		CwS 0	0.292	0.07	0.29	0.012
+

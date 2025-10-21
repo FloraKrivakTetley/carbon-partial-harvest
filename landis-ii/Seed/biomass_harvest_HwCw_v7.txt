@@ -1,0 +1,168 @@
+LandisData	"Biomass Harvest"
+
+>>------------------------------------------------------------------------
+>> TIMESTEP
+Timestep 1
+
+>>------------------------------------------------------------------------
+>> MANAGEMENT AREAS: the .gis file which defines the management areas.
+ManagementAreas "./management.img"
+
+>>------------------------------------------------------------------------
+>> STANDS: the .gis file which defines the stands. A stand can belong to
+>> one and only one management area.
+Stands "./stand.img"
+
+>> PRESCRIPTION NAME
+>> Each prescription must have a unique name, which can be referenced
+>> later in the HarvestImplementation section.
+>> The data following the prescription name defines the prescription.
+
+>> STAND RANKING METHOD:
+>> The different Stand Ranking methods are listed below.
+>> Some require extra parameters, which are outlined in the user guide.
+>> Select 1 of the following:
+>> 1. Economic - requires SPECIES information
+>> 2. MaxCohortAge
+>> 3. Random
+>> 4. RegulateAges
+
+>> AGE REQUIREMENTS:
+>> Define a Minimum or Maximum age to limit the prescription stand ages.
+
+
+>> SITE SELECTION METHOD:
+>> The different Site Selection methods are listed below.
+>> Some require extra parameters, which are outlined in the user guide.
+>> Select 1 of the following:
+>> 1. Complete
+>> 2. CompleteStandSpread
+>> 3. PartialStandSpread
+>> 4. PatchCutting
+>> 							Percentage Patch Size
+>> ---------- ------------------------------------
+
+
+>> COHORT REMOVAL METHOD:
+>> The different Cohort Removal methods are listed below.
+>> Select 1 of the following:
+>> 1. ClearCut
+>> 2. SpeciesList - requires SPECIES information
+
+>> Wind Implementation via Harvest
+
+Prescription Wind
+StandRanking Random
+MinimumTimeSinceLastHarvest 0
+SiteSelection PartialStandSpread 1 4
+CohortsRemoved 1-100(0%) 101-400 (0.3%)
+
+>> Scenario A: Baseline No Cutting
+
+>> Run model with no harvest implementation
+
+>> Scenario B: Baseline Clearcut w/ Reserves (like currect clearcut implementation)
+
+Prescription Clearcut << Check that this is working correctly.
+StandRanking MaxCohortAge
+StandAdjacency 15
+AdjacencyType TimeSinceLastHarvested
+MinimumTimeSinceLastHarvest 100
+SiteSelection PatchCutting 88% 16 << These are Percentage and Target Patch Size
+CohortsRemoved ClearCut
+Plant HwS CwS
+
+>> Scenario 2-3: 30% Partial Harvest, approximates single/group selection
+
+Prescription PH30
+StandRanking MaxCohortAge
+StandAdjacency 5
+AdjacencyType TimeSinceLastHarvested
+MinimumTimeSinceLastHarvest 100
+SiteSelection PartialStandSpread 1 16
+CohortsRemoved SpeciesList
+Hw 1-400 (30%)
+Cw 1-400 (30%)
+Plant HwS CwS
+
+>> Scenario 4-5: 60% Partial Harvest, approximates single/group selection
+
+Prescription PH60
+StandRanking MaxCohortAge
+StandAdjacency 15
+AdjacencyType TimeSinceLastHarvested
+MinimumTimeSinceLastHarvest 100
+SiteSelection PartialStandSpread 1 16
+CohortsRemoved SpeciesList
+Hw 1-400 (60%)
+Cw 1-400 (60%)
+Plant HwS CwS
+
+>> Patch Cut PH Scenarios (in case we want to implement this way) THESE HAVE NOT BEEN TESTED
+
+>>Prescription Patch30
+>>StandRanking MaxCohortAge
+>>MinimumTimeSinceLastHarvest 100
+>>SiteSelection PatchCutting 
+>>Percentage 30%
+>>TargetPatchSize 1 2
+>>CohortsRemoved ClearCut
+>>Plant HwS CwS
+
+>>Prescription Patch60
+>>StandRanking MaxCohortAge
+>>MinimumTimeSinceLastHarvest 100
+>>SiteSelection PatchCutting 
+>>Percentage 60%
+>>TargetPatchSize 1 2
+>>CohortsRemoved ClearCut
+>>Plant HwS CwS
+
+
+
+>>ANOTHER PRESCRIPTION COULD BE ADDED HERE>>
+
+HarvestImplementations		
+>>                                Harvest Area		Begin	End
+>>Mgmt Area -	Prescription	percent per year	Time	Time
+>>raster code
+
+>>-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------				
+>> Wind
+1			Wind						100%		1		50  << How dooes this implementation look?
+>> BASELINE NO HARVEST
+>>1         N/A                         0           1       50  << SCENARIO A: Baseline: no harvest (place holder; no harvest implementation) 
+>> Set of Scenarios that approximate current actual harvest rates in Gitanyow
+>>1			Clearcut					0.2%		1		50	<< SCENARIO B: Baseline Clearcut with reserves
+>>1         PH30						0.2%		1		50	<< SCENARIO C: 30% Partial Harvest
+>>1			PH30						0.6667%		1		50	<< SCENARIO D: 30% Partial Harvest w/ area increased to meet baseline volume removal
+>>1			PH60						0.2%		1		50	<< SCENARIO E: 60% Partial Harvest
+>>1			PH60						0.3333%		1		50	<< SCENARIO F: 60% Partial Harvest w/ area increased to meet baseline volume removal
+>> Set of scenarios to approximate AAC
+>>1			Clearcut					0.6%			1		50	<< 
+>>1         PH30						0.6%			1		50	<< 
+>>1			PH30						2%				1		50	<< 
+>>1			PH60						0.6%			1		50	<< 
+>>1			PH60						1				1		50	<< 
+>> Set of scenarios for 1%/yr harvest rate, for sake of comparison
+>>1			Clearcut					1%				1		50	<< 
+>>1         PH30						1%				1		50	<< 
+>>1			PH30						3.333%			1		50	<< 
+>>1			PH60						1%				1		50	<< 
+>>1			PH60						1.6667%			1		50	<< 
+
+	
+
+
+>>------------------------------------------------------------------------
+>> OUTPUT FILES
+	
+	PrescriptionMaps	harvest/prescription-map-{timestep}.img
+	BiomassMaps			harvest/biomass-removed-{timestep}.img << for Biomass Harvest
+	EventLog			harvest/log.csv
+	SummaryLog			harvest/summarylog.csv
+	
+	
+	
+	
+	

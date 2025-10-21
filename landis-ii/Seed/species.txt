@@ -1,0 +1,10 @@
+LandisData  Species
+
+>>            Sexual    Shade  Fire  Seed Disperal Dist  Sprout   Age  	      Post-Fire
+>> Name Long  Maturity  Tol.   Tol.  Effective  Maximum  Prob  Min   Max      Regen
+>> ----------------------------------------------------------------------------------------
+
+   Hw 	600	    20	      4      3	  50	     1398	   0	0	  0	      none << updated from CD Pine Creek files for ICH partial harvest
+   Cw 	800	    10	      4      3	  100	     122	   0	0	  0	      none << updated from CD Pine Creek files for ICH partial harvest
+   HwS  600     20        4      3    50         1398      0    0     0       none
+   CwS  800	    10	      4      3	  100	     122	   0	0	  0	      none
