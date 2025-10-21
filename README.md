@@ -11,4 +11,6 @@ sortie. Contains input files used for sortie modelling and output files used in 
 
 landis-ii. Contains input files used for 42 LANDIS-II modelling scenarios. To run, download ALL_INPUTS, then edit scenario file and biomass harvest file to select the correct input files for the management scenario you wish to model.
 
+analysis. Contains scripts used to process LANDIS-II output, data files produced using those scripts, and code for manuscript figure generation.
+
 
