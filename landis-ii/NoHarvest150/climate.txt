@@ -1,7 +1,0 @@
-LandisData "ForC Succession"
-
-ClimateTable
->>Time	Eco	AvgT	
->>Step		(C)	
->>-------------------------
-0	ICHmc	4.4

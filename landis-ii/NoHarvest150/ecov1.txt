@@ -1,9 +1,0 @@
-LandisData  Ecoregions
-
->>         Map
->> Active  Code  	Name   ID in output
->> ------------------------------------
-	no	0	outside	outside
-	yes	1	ICHmc		1
-	
-			
