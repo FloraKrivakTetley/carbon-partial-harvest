@@ -9,6 +9,6 @@ Folders:
 
 sortie. Contains input files used for sortie modelling and output files used in LANDIS-II parameter selection and validation.
 
-landis-ii. Contains input files used for 42 LANDIS-II modelling scenarios. To run, download ALL_INPUTS, then edit Scenario files to select the management scenario you wish to model.
+landis-ii. Contains input files used for 42 LANDIS-II modelling scenarios. To run, download ALL_INPUTS, then edit scenario file and biomass harvest file to select the correct input files for the management scenario you wish to model.
 
 
