@@ -1,0 +1,76 @@
+LandisData "Forest Roads Simulation"
+
+Timestep 1
+
+HeuristicForNetworkConstruction Closestfirst
+
+SkiddingDistance 500 << set this as initial default. reasonable?
+
+LoopingBehavior Yes
+LoopingMinDistance 500
+LoopingMaxDistance 1200
+LoopingMaxPercentageOfRoads 10
+LoopingMaxCost 10
+LoopingProbability 16
+
+OutputsOfRoadNetworkMaps ./roads/roadNetwork.tif
+OutputsOfRoadLog ./roads/
+
+>> INPUT RASTERS
+>> For these basic simulations, I will start with a road network that consists of a single paved road running up through the middle of my landscape.
+>> 
+
+RasterOfBuildableZones "./zones.img"
+InitialRoadNetworkMap "./roads2.img"
+DistanceCost 365.6
+CoarseElevationRaster none
+
+CoarseElevationCosts
+>> Lower elevation Upper elevation Additional
+>> threshold threshold value
+0 9 0
+9 16 0
+16 41 0
+41 1000 0
+
+FineElevationRaster none
+
+CoarseWaterRaster none
+FineWaterRaster none
+SoilsRaster none
+
+>> ROAD TYPE THRESHOLDS AND MULTIPLICATION VALUES
+>> These are necessary parameters
+
+SimulationOfRoadAging No
+SimulationOfWoodFlux Yes
+
+>>RoadTypes
+>> Use when including road aging
+>> Lower Wood Flux Upper Wood Flux Road type Multiplicative Maximum age Road Type
+>> threshold threshold ID Cost Value Before destruction Name
+>>0 70 6 0.31 20 Winter_road
+>>70 105 5 0.46 20 Class_05
+>>105 3000 4 0.66 20 Class_04
+>>3000 40000 3 1 20 Class_03
+>>40000 70000 2 2.88 25 Class_02
+>>70000 100000 1 4.26 25 Class_01
+>>100000 1000000000 7 4.73 50 Out_Of_Norms
+
+RoadTypes
+>> Use when no road aging included
+>> Lower Wood Flux Upper Wood Flux Road type Multiplicative Maximum age Road Type
+>> threshold threshold ID Cost Value Before destruction Name
+0 70 6 0.31 Winter_road
+70 105 5 0.46 Class_05
+105 3000 4 0.66 Class_04
+3000 40000 3 1 Class_03
+40000 70000 2 2.88 Class_02
+70000 100000 1 4.26 Class_01
+100000 1000000000 7 4.73 Out_Of_Norms
+
+RoadTypesForExitingWood
+>> Road type Road Type
+>> ID Name
+8 Sawmill
+9 MainRoadNetworkPaved

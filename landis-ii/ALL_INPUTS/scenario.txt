@@ -1,0 +1,32 @@
+LandisData  Scenario
+
+Duration  50
+
+Species   species.txt
+
+Ecoregions      ./ecov1.txt
+EcoregionsMap   ./eco.img
+
+CellLength  100 << meters, so cell area = 1 ha
+
+
+>> Succession Extension     Initialization File
+>> --------------------     -------------------
+     "ForC Succession"        ForCS_PH_v4.txt
+
+
+>> Disturbance Extensions   Initialization File
+>> ----------------------   -------------------
+   "Base Wind"					wind.txt
+   "Biomass Harvest"			biomass_harvest_HwCw_v8.txt		<< Turn off harvest for Scenario Test run
+   "Forest Roads Simulation"    roads.txt
+   
+>>   DisturbancesRandomOrder  no  << optional parameter; default = no
+
+
+>> Other Extensions         Initialization File
+>> ----------------         -------------------
+
+  
+
+
