@@ -5,4 +5,9 @@ A publication based on this work is currently under review at Ecological Applica
 Krivak-Tetley, F., C. C. Dymond, E. Lilles, T. Marsden, and B. Eskelson. 2025. Unlocking temperate rainforest carbon sequestration by reducing harvest intensity, 
 harvest rate, and residue burning. Ecological Applications In Review.
 
+Folders:
+sortie. Contains input files used for sortie modelling and output files used in LANDIS-II parameter selection and validation.
+
+landis-ii. Contains input files used for 42 LANDIS-II modelling scenarios. To run, download ALL_INPUTS, then edit Scenario files to select the management scenario you wish to model.
+
 
