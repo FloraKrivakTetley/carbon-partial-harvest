@@ -3,7 +3,7 @@ Data and code associated with LANDIS-II modelling project assessing forest carbo
 
 A publication based on this work is currently in preparation:
 Krivak-Tetley, F., C. C. Dymond, E. Lilles, T. Marsden, and B. Eskelson. 2025. Unlocking temperate rainforest carbon sequestration by reducing harvest intensity, 
-harvest rate, and residue burning. Ecological Applications In Review.
+harvest rate, and residue burning.
 
 Folders:
 
