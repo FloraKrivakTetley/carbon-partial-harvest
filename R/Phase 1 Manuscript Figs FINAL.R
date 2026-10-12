@@ -7,6 +7,7 @@ library(tidyverse)
 library(viridis)
 library(colorblindcheck)
 library(ggplot2)
+library(here)
 
 # Check 
 
@@ -21,12 +22,7 @@ palette_check(scenarios_pal, plot=TRUE)
 ## for image rendering
 info<-ggplot_build(gg)$data
 
-Drive<- "C:/Users/fkrivakt/OneDrive - UBC/Desktop/SCENARIOS2"
-setwd(paste0(Drive))
-
-## FCIData<- read.csv("ScenariosWithHWP04Oct.csv") ## note this doesn't have all flux calculations added
-## FCIDataFullPH<- read.csv("ScenariosWithHWPandAllNH26Apr24.csv")
-FCIDataFullPH<- read.csv("ScenarioOutputCorrected09Oct24.csv")
+FCIDataFullPH<- read.csv("data/ScenarioOutputCorrected09Oct24.csv")
 
 ## Check factor ordering, use some version of this as needed
 FCIDataFullPH$Harvest<- factor(FCIDataFullPH$Harvest, levels=c("NoHarvest", "PH30", "PH60", "PH30Plus", "PH60Plus", "Clearcut"))
@@ -38,79 +34,29 @@ FCIDataFullPHNoDuplicates <- FCIDataFullPH%>%
   distinct(Time, Scenario, .keep_all=TRUE)
 
 
-write.csv(FCIDataFullPHNoDuplicated, "FCIDataFullPHNoDuplicates13Feb2025.csv")
+# write.csv(FCIDataFullPHNoDuplicated, "FCIDataFullPHNoDuplicates13Feb2025.csv")
 ## Read this file for use in analysis and making figures OR rerun the code above
+
 
 age_labels <- c("Mature Forest", "Old Forest")
 names(age_labels)<- c("150", "300")
-rate_labels<- c("Low Baseline", "High Baseline")
+rate_labels<- c("Historical", "Maximum")
 names(rate_labels)<- c("Low", "High")
 flux_labels<- c("Net Ecosystem Productivity", "Substitution", "Slash Burning", "Harvested Wood Products")
 names(flux_labels) <- c("NEP_CO2eha", "sub1", "ToAirBurn_CO2e", "yrly_HWPfluxhaNoFossil")
 harvest_labels <- c("No Harvest", "PH60", "Clearcut")
 names(harvest_labels)<- c("NoHarvest", "PH60", "Clearcut")
-
-## Figure 1 ##
+harvest_labels2 <- c("No Harvest", "PH30-AM", "PH60-AM", "PH30-VM", "PH60-VM", "Clearcut")
+names(harvest_labels2) <- c("NoHarvest", "PH30", "PH60", "PH30Plus", "PH60Plus", "Clearcut")
+harvest_labels3 <- c("PH30-AM", "PH60-AM", "PH30-VM", "PH60-VM", "Clearcut")
+names(harvest_labels3)<- c("PH30", "PH60" ,"PH30Plus", "PH60Plus", "Clearcut")
+      
+## FIGURE 1 ##
 ## MAP. See ArcGIS and Figure 1c raster script.
 
-## Figure 2. Carbon pools in unharvested and clearcut landscapes over 50 years
+## FIGURE 2. Meta modelling schematic.
 
-CarbonPools<-
-  FCIDataFullPH%>%
-  select("Scenario", "Year", "Time", "StandAge", "Burn", "Rate", "Harvest", "HarvestIntensity", "PH", "NEP", 
-         "ABio_CO2eha", "BBio_CO2eha","TotalDOM_CO2eha", "ProductsCO2eha", "LandfillCO2eha")%>%
-  pivot_longer(cols=c(ABio_CO2eha, BBio_CO2eha, TotalDOM_CO2eha, ProductsCO2eha, LandfillCO2eha), names_to="CarbonPool")%>%
-  mutate(Year=as.numeric(Year))
-
-CarbonPools$CarbonPool<- factor(CarbonPools$CarbonPool, levels=c("LandfillCO2eha", "ProductsCO2eha",
-                                                               "ABio_CO2eha", "BBio_CO2eha", "TotalDOM_CO2eha"))
-
-## Graph just two scenarios
-CarbonPools%>%filter(StandAge==150, Rate=="High", Burn=="Burn", Harvest=="NoHarvest"|Harvest=="Clearcut"|Harvest=="PH60")%>%
-  ggplot(aes(x=Year, y=value, group=CarbonPool))+
-  geom_area(aes(fill=CarbonPool), position='stack')+
-  facet_grid(.~Harvest, labeller=labeller(Harvest=harvest_labels))+
-  scale_fill_manual(values=c("#7D26CD", "#FFFF00","#7CAE00", "#8B3626", "#D2B48C"), 
-                    labels=c("Landfills", "Wood Products", "Aboveground Live", "Belowground Live", "DOM and Soils"),
-                    name="Carbon Pool")+ # checked colorblind safe
-  theme_classic(base_size=14)+
-  theme(axis.text.x = element_text(angle = 90,
-                                   vjust = 0.5,
-                                   hjust = 0.5))+
-  scale_y_continuous(sec.axis=sec_axis(~.*(12/44), name=(bquote(paste("Mg C ha"^-1)))))+
-  ylab(bquote(paste("tonnes CO "[2],"e ha"^-1)))
-
-## Figure 3. Total System C- Burn scenarios
-
-FCIDataFullPH%>% filter(Burn=="Burn")%>% ##, Rate=="High"|Rate=="NA")%>%
-  ggplot(aes(x=Year, y=TotalSystemCo2eha, fill=Harvest, colour=Harvest))+
-  facet_grid(Rate~StandAge, labeller=labeller(StandAge=age_labels, Rate=rate_labels))+
-  geom_line(size=1)+
-  theme_classic(base_size=14)+
-  scale_colour_viridis(discrete=TRUE, option="H")+
-  scale_fill_viridis(discrete=TRUE, option="H")+
-  # scale_fill_manual(values=c("#7CAE00","lightblue", "#00BFC4","violet", "purple", "#F8766D" ))+
-  # scale_colour_manual(values=c("#7CAE00","lightblue", "#00BFC4","violet", "purple", "#F8766D" ))+
-  theme_classic(base_size = 14)+
-  ylim(1800, 2300)+
-  xlab("Year")+
-  ylab(bquote(paste("Total system carbon (tonnes CO "[2],"e ha"^-1,")")))
-
-## Figure 4 Burn-No Burn
-
-FCIDataFullPH%>% filter(StandAge==300, Rate=="High", Harvest != "NoHarvest")%>% 
-  ggplot(aes(x=Year, y=TotalSystemCo2eha, fill=Harvest, colour=Harvest, lty=Burn))+
-  facet_grid(Rate~StandAge, labeller=labeller(StandAge=age_labels, Rate=rate_labels))+
-  geom_line(size=1)+
-  scale_fill_manual(values=c("#3E9BFEFF", "#46F884FF","#E1DD37FF", "#F05B12FF","#7A0403FF" ))+
-  scale_colour_manual(values=c("#3E9BFEFF", "#46F884FF","#E1DD37FF","#F05B12FF","#7A0403FF" ))+
-  theme_bw(base_size = 14)+
-  scale_linetype_manual(values=c(1,3))+
-  xlab("Year")+
-  ylab(bquote(paste("Total system carbon (tonnes CO "[2],"e ha"^-1,")")))
-
-
-## Figure 6
+## FIGURE 3. 
 ## Cumulative flux figure
 
 CumFluxFig <- 
@@ -122,12 +68,12 @@ CumFluxFig <-
   geom_bar(position="dodge", stat="identity")+
   theme_bw(base_size=14)+
   geom_hline(yintercept=0, color="black", lty=2)+
-  scale_fill_viridis(discrete=TRUE, option="H")+
+  scale_fill_viridis(discrete=TRUE, option="H", labels=harvest_labels2)+
   ylab(bquote(paste("Cumulative NSP (tonnes CO "[2],"e ha"^-1,")")))+
   ylim(-300, 150)
 print(CumFluxFig)
 
-## Figure 5 Compare flux sources
+## NEW FIGURE 4 Compare flux sources
 
 stacked_data <- FCIDataFullPH %>%
   select(Time, Year, Scenario, Harvest, Percentage, HarvestIntensity, StandAge, Rate, Burn, NEP_CO2eha, ToAirBurn_CO2eha,
@@ -142,7 +88,7 @@ stacked_data$Rate<- factor(stacked_data$Rate, levels=c("Low", "High"))
 stacked_data$FluxSource<- factor(stacked_data$FluxSource, levels =c("sub1", "yrly_HWPfluxhaNoFossil", "ToAirBurn_CO2eha", "NEP_CO2eha"))
 
 CC <- stacked_data%>%filter(Harvest=="Clearcut", Burn=="Burn")
-  
+
 ggplot(data=CC)+
   geom_bar(aes(y=CarbonFlux, x = Year, fill=FluxSource), position = "stack", stat = "identity")+
   geom_hline(yintercept=0, col="black")+
@@ -170,7 +116,7 @@ ggplot(data=PH_30)+
   facet_grid(Rate~StandAge, labeller = labeller(StandAge=age_labels, Rate=rate_labels))+
   ylab(bquote(paste("Annual NSP (tonnes CO  "[2],"e ha"^-1,")")))
 
-## Figure 8
+## NEW FIGURE 5
 
 ## REGULAR VERSION ##
 Fig8Data<- FCIDataFullPH%>%mutate(Year=as.numeric(Year))%>% ##, HarvestIntensity=as.factor(HarvestIntensity))%>%
@@ -181,7 +127,7 @@ Fig8Data<- Fig8Data%>%
   mutate(ScenarioType = ifelse(PH=="Yes", "Partial Harvest", "Clearcut"),
          AvgFPSTotal = AvgFPSMgha*40000)
 
-  ggplot(data=Fig8Data, aes(x=AvgFPSTotal, y=CumNSPCO2ehaNoFossil, shape=ScenarioType, lty=ScenarioType))+
+ggplot(data=Fig8Data, aes(x=AvgFPSTotal, y=CumNSPCO2ehaNoFossil, shape=ScenarioType, lty=ScenarioType))+
   geom_point(size=3)+ ##, shape=HarvestIntensity))+
   geom_smooth(method="lm", linewidth=1, color = "black",fullrange=TRUE, se=FALSE)+
   theme_classic(base_size = 14)+
@@ -191,13 +137,13 @@ Fig8Data<- Fig8Data%>%
   # scale_shape_manual(values=c(16,17))+
   geom_hline(yintercept=0, color="black", lty=2, size=1)+
   scale_x_continuous(sec.axis=sec_axis(~.*2/0.40882*1/1000, 
-    name = bquote(paste("Mean annual volume to forest products sector (1000 m"^3,")"))), expand=c(0,0, 0, 150))+
+                                       name = bquote(paste("Mean annual volume to forest products sector (1000 m"^3,")"))), expand=c(0,0, 0, 150))+
   xlab("Mean annual biomass to forest products sector (Mg C)")+
   ylab(bquote(paste("Cumulative NSP at year 2075 (tonnes CO  "[2],"e ha"^-1,")")))
-  
+
 ## updated stats 27 Feb 2025  
 library(jtools)
-    
+
 anova(lm(CumNSPCO2ehaNoFossil ~ AvgFPSTotal * ScenarioType, data=Fig8Data))
 summ(lm(CumNSPCO2ehaNoFossil ~ AvgFPSTotal * ScenarioType, data=Fig8Data))
 coef(lm(CumNSPCO2ehaNoFossil ~ AvgFPSTotal * ScenarioType, data=Fig8Data))
@@ -209,18 +155,67 @@ coef(lm(CumNSPCO2ehaNoFossil ~ AvgFPSTotal * ScenarioType, data=Fig8Data))
 ## get regression coefficients for clearcut line
 Fig8DataCC<- Fig8Data%>%
   filter(ScenarioType=="Clearcut")
-  summary(lm(CumNSPCO2ehaNoFossil ~ AvgFPSTotal, data=Fig8DataCC))
-  
+summary(lm(CumNSPCO2ehaNoFossil ~ AvgFPSTotal, data=Fig8DataCC))
+
 ## Clearcut: y = 149.8 - 0.009258x
-  
-  Fig8DataPH<- Fig8Data%>%
-    filter(ScenarioType=="Partial Harvest")
-  summary(lm(CumNSPCO2ehaNoFossil ~ AvgFPSTotal, data=Fig8DataPH))
+
+Fig8DataPH<- Fig8Data%>%
+  filter(ScenarioType=="Partial Harvest")
+summary(lm(CumNSPCO2ehaNoFossil ~ AvgFPSTotal, data=Fig8DataPH))
 
 ## PH: y = 150.3 -0.007155x
 
 library(car)
 car::Anova(lm(CumNSPCO2ehaNoFossil ~ AvgFPSTotal*ScenarioType, data=Fig8Data))
+
+## NEW FIGURE 6. Total System C- Burn scenarios
+
+FCIDataFullPH%>% filter(Burn=="Burn")%>% ##, Rate=="High"|Rate=="NA")%>%
+  ggplot(aes(x=Year, y=TotalSystemCo2eha, fill=Harvest, colour=Harvest))+
+  facet_grid(Rate~StandAge, labeller=labeller(StandAge=age_labels, Rate=rate_labels))+
+  geom_line(size=1)+
+  theme_classic(base_size=14)+
+  scale_colour_viridis(discrete=TRUE, option="H")+
+  scale_fill_viridis(discrete=TRUE, option="H")+
+  # scale_fill_manual(values=c("#7CAE00","lightblue", "#00BFC4","violet", "purple", "#F8766D" ))+
+  scale_colour_discrete(labels=harvest_labels2)+
+  theme_bw(base_size = 14)+
+  ylim(1800, 2300)+
+  xlab("Year")+
+  ylab(bquote(paste("Total system carbon (tonnes CO "[2],"e ha"^-1,")")))
+
+
+## Figure 7 Burn-No Burn
+
+FCIDataFullPH%>% filter(StandAge==300, Rate=="High", Harvest != "NoHarvest")%>% 
+  ggplot(aes(x=Year, y=TotalSystemCo2eha, fill=Harvest, colour=Harvest, lty=Burn))+
+ # facet_grid(Rate~StandAge, labeller=labeller(StandAge=age_labels, Rate=rate_labels))+
+  geom_line(size=1)+
+  scale_fill_manual(values=c("#3E9BFEFF", "#46F884FF","#E1DD37FF", "#F05B12FF","#7A0403FF" ))+
+  scale_colour_manual(values=c("#3E9BFEFF", "#46F884FF","#E1DD37FF","#F05B12FF","#7A0403FF") ,
+                            labels=harvest_labels3)+
+  theme_bw(base_size = 14)+
+  scale_linetype_manual(values=c(1,3))+
+  xlab("Year")+
+  ylab(bquote(paste("Total system carbon (tonnes CO "[2],"e ha"^-1,")")))
+
+## ALT Figure 7
+
+burn_comp<- FCIDataFullPH%>%
+  filter(StandAge==300, Rate=="High", Harvest != "NoHarvest")%>% 
+  pivot_wider(names_from=Burn, 
+              id_cols=c(Year, Harvest, Rate, StandAge),
+              values_from=TotalSystemCo2eha)%>%
+  mutate(Difference=NoBurn-Burn)
+  
+  ggplot(burn_comp, aes(x=Year, y=Difference, fill=Harvest, colour=Harvest))+
+  geom_line(size=1, lty="dashed")+
+  scale_fill_manual(values=c("#3E9BFEFF", "#46F884FF","#E1DD37FF", "#F05B12FF","#7A0403FF" ))+
+  scale_colour_manual(values=c("#3E9BFEFF", "#46F884FF","#E1DD37FF","#F05B12FF","#7A0403FF" ),
+                      labels=harvest_labels3)+
+  theme_bw(base_size = 14)+
+  xlab("Year")+
+  ylab(bquote(paste(Delta," total system carbon (tonnes CO "[2],"e ha"^-1,")")))
 
 
 ## Figure 9
@@ -242,6 +237,40 @@ AllRoadsCombined%>%filter(StandAge==150, Harvest%in%c("PH30", "PH60", "PH30Plus"
   ylim(c(0,1.8))+
   xlab("Percentage of landscape harvested per year (%)")+
   ylab(bquote(paste("2075 Road density (km km"^-2,")")))
+
+
+## Figure XX now in Supplement
+## Carbon pools in unharvested and clearcut landscapes over 50 years
+
+CarbonPools<-
+  FCIDataFullPH%>%
+  select("Scenario", "Year", "Time", "StandAge", "Burn", "Rate", "Harvest", "HarvestIntensity", "PH", "NEP", 
+         "ABio_CO2eha", "BBio_CO2eha","TotalDOM_CO2eha", "ProductsCO2eha", "LandfillCO2eha")%>%
+  pivot_longer(cols=c(ABio_CO2eha, BBio_CO2eha, TotalDOM_CO2eha, ProductsCO2eha, LandfillCO2eha), names_to="CarbonPool")%>%
+  mutate(Year=as.numeric(Year))
+
+CarbonPools$CarbonPool<- factor(CarbonPools$CarbonPool, levels=c("LandfillCO2eha", "ProductsCO2eha",
+                                                               "ABio_CO2eha", "BBio_CO2eha", "TotalDOM_CO2eha"))
+
+## Graph just two scenarios
+CarbonPools%>%filter(StandAge==150, 
+                     Rate=="High", 
+                     Burn=="Burn", 
+                     Harvest %in% c("NoHarvest", "Clearcut", "PH60"))%>%
+  ggplot(aes(x=Year, y=value, group=CarbonPool))+
+  geom_area(aes(fill=CarbonPool), position='stack')+
+  facet_grid(.~Harvest, labeller=labeller(Harvest=harvest_labels))+
+  scale_fill_manual(values=c("#7D26CD", "#FFFF00","#7CAE00", "#8B3626", "#D2B48C"), 
+                    labels=c("Landfills", "Wood Products", "Aboveground Live", "Belowground Live", "DOM and Soils"),
+                    name="Carbon Pool")+ # checked colorblind safe
+  theme_classic(base_size=14)+
+  theme(axis.text.x = element_text(angle = 90,
+                                   vjust = 0.5,
+                                   hjust = 0.5))+
+  scale_y_continuous(sec.axis=sec_axis(~.*(12/44), name=(bquote(paste("Mg C ha"^-1)))))+
+  ylab(bquote(paste("tonnes CO "[2],"e ha"^-1)))
+
+
 
 
 ## SUPPLEMENTAL FIGURES AND TABLES
