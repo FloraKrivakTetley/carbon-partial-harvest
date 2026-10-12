@@ -175,17 +175,15 @@ FCIDataFullPH%>% filter(Burn=="Burn")%>% ##, Rate=="High"|Rate=="NA")%>%
   facet_grid(Rate~StandAge, labeller=labeller(StandAge=age_labels, Rate=rate_labels))+
   geom_line(size=1)+
   theme_classic(base_size=14)+
-  scale_colour_viridis(discrete=TRUE, option="H")+
+  scale_colour_viridis(discrete=TRUE, option="H", labels=harvest_labels2)+
   scale_fill_viridis(discrete=TRUE, option="H")+
-  # scale_fill_manual(values=c("#7CAE00","lightblue", "#00BFC4","violet", "purple", "#F8766D" ))+
-  scale_colour_discrete(labels=harvest_labels2)+
   theme_bw(base_size = 14)+
   ylim(1800, 2300)+
   xlab("Year")+
   ylab(bquote(paste("Total system carbon (tonnes CO "[2],"e ha"^-1,")")))
 
 
-## Figure 7 Burn-No Burn
+## NEW FIGURE 7 Burn-No Burn
 
 FCIDataFullPH%>% filter(StandAge==300, Rate=="High", Harvest != "NoHarvest")%>% 
   ggplot(aes(x=Year, y=TotalSystemCo2eha, fill=Harvest, colour=Harvest, lty=Burn))+
@@ -218,19 +216,32 @@ burn_comp<- FCIDataFullPH%>%
   ylab(bquote(paste(Delta," total system carbon (tonnes CO "[2],"e ha"^-1,")")))
 
 
-## Figure 9
+## NEW FIGURE 8
 
 
-AllRoadsCombined<- read.csv(file="AllRoadsCombined22May24.csv")  
+AllRoadsCombined<- read.csv(file="data/AllRoadsCombined22May24.csv")  
 AllRoadsCombined$Harvest<- factor(AllRoadsCombined$Harvest, levels=c("PH30", "PH60", "PH30Plus", "PH60Plus", "Clearcut"))
 
 AllRoadsCombined%>%filter(StandAge==150, Harvest%in%c("PH30", "PH60", "PH30Plus", "PH60Plus", "Clearcut"))%>%
-  mutate(PH=case_when(Harvest=="NoHarvest"|Harvest=="Clearcut" ~ "No",Harvest=="CC"~ "No", Harvest=="PH30"~"Yes",
-                      Harvest=="PH30Plus"~"Yes", Harvest=="PH60"~"Yes",Harvest=="PH60Plus" ~ "Yes"))%>%
+  mutate(PH=case_when(Harvest=="NoHarvest"|Harvest=="Clearcut" ~ "No",
+                      Harvest=="CC"~ "No", 
+                      Harvest=="PH30"~"Yes",
+                      Harvest=="PH30Plus"~"Yes", 
+                      Harvest=="PH60"~"Yes",
+                      Harvest=="PH60Plus" ~ "Yes"))%>%
   ggplot(aes(x=Percentage, y=Road.density.km, colour=Harvest))+
   geom_point(size=4, shape=16)+
   theme_classic(base_size = 14)+
-  scale_colour_manual(values=c("#3E9BFEFF", "#46F884FF","#E1DD37FF","#F05B12FF","#7A0403FF" ))+
+  theme(legend.position = "inside",
+        legend.position.inside=c(0.9, 0.35),
+        legend.background = element_rect(
+          fill = "white",
+          colour = "black",
+          linewidth = 0.5
+        )
+      )+
+  scale_colour_manual(values=c("#3E9BFEFF", "#46F884FF","#E1DD37FF","#F05B12FF","#7A0403FF" ),
+                      labels=harvest_labels3)+
   # scale_shape_manual(values=c(16:18,15))+
   geom_hline(yintercept=0.6,lty=2)+
   geom_hline(yintercept=1.6, lty=2)+
