@@ -185,7 +185,7 @@ FCIDataFullPH%>% filter(Burn=="Burn")%>% ##, Rate=="High"|Rate=="NA")%>%
   ylab(bquote(paste("Total system carbon (tonnes CO "[2],"e ha"^-1,")")))
 
 
-## Figure 7 Burn-No Burn
+## NEW FIGURE 7 Burn-No Burn
 
 FCIDataFullPH%>% filter(StandAge==300, Rate=="High", Harvest != "NoHarvest")%>% 
   ggplot(aes(x=Year, y=TotalSystemCo2eha, fill=Harvest, colour=Harvest, lty=Burn))+
@@ -218,7 +218,7 @@ burn_comp<- FCIDataFullPH%>%
   ylab(bquote(paste(Delta," total system carbon (tonnes CO "[2],"e ha"^-1,")")))
 
 
-## Figure 9
+## NEW FIGURE 8
 
 
 AllRoadsCombined<- read.csv(file="AllRoadsCombined22May24.csv")  
